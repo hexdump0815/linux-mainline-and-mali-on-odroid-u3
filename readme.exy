@@ -1,0 +1,84 @@
+#
+# directories:
+# - /compile/doc/stable - the files in this dir
+# - /compile/source/linux-stable - the kernel sources checked out from gitrepo
+# - /compile/result/stable - the resulting kernel, modules etc. tar.gz files
+#
+# patches:
+# add cmdline option to set a fixed ethernet mac address on the kernel cmdline to avoid getting a randomone on each boot
+patch -p1 < /compile/doc/stable/misc.exy/eth-hw-addr.patch 
+# this one is needed to make suspend work with 4.19+
+patch -p1 < /compile/doc/stable/misc.exy/snow-v4-19-suspend-fix.patch
+# disable the usb3 port on snow - it makes trouble with suspend etc.
+patch -p1 < /compile/doc/stable/misc.exy/disable-usb3.patch
+# fix thermal cpu cooling for the odroid u3 and x2
+patch -p1 < /compile/doc/stable/misc.exy/fix-odroid-u3-cpu-cooling.patch
+# add mali support
+patch -p1 < /compile/doc/stable/misc.exy/exynos4412-mali-complete.patch
+tar xzf /compile/doc/stable/misc.exy/exynos4412-mali-complete.tar.gz
+patch -p1 < /compile/doc/stable/misc.exy/devfreq-turbo-for-mali-gpu-driver.patch 
+patch -p1 < /compile/doc/stable/misc.exy/mm-cma-export-functions-to-get-CMA-base-and-size.patch
+patch -p1 < /compile/doc/stable/misc.exy/kernel-dma-export-dma-contigous.patch
+patch -p1 < /compile/doc/stable/misc.exy/dts-add-gpu-node-for-exynos4412.patch 
+patch -p1 < /compile/doc/stable/misc.exy/dts-add-gpu-opp-table.patch 
+patch -p1 < /compile/doc/stable/misc.exy/dts-setup-gpu-node.patch
+
+cp /compile/doc/stable/config.exy /compile/source/linux-stable/.config
+cd /compile/source/linux-stable
+export ARCH=arm
+make oldconfig
+make -j 4 zImage dtbs modules
+export kver=`make kernelrelease`
+echo ${kver}
+make modules_install
+cp -v .config /boot/config-${kver}
+cp -v arch/arm/boot/zImage /boot/zImage-${kver}
+mkdir -p /boot/dtb-${kver}
+cp -v arch/arm/boot/dts/exynos4412-odroidu3.dtb /boot/dtb-${kver}
+cp -v arch/arm/boot/dts/exynos4412-odroidx2.dtb /boot/dtb-${kver}
+cp -v arch/arm/boot/dts/exynos5250-snow.dtb /boot/dtb-${kver}
+cp -v arch/arm/boot/dts/exynos5250-snow-rev5.dtb /boot/dtb-${kver}
+cp -v arch/arm/boot/dts/exynos5422-odroidxu4.dtb /boot/dtb-${kver}
+cp -v System.map /boot/System.map-${kver}
+cd /boot
+update-initramfs -c -k ${kver}
+mkimage -A arm -O linux -T ramdisk -a 0x0 -e 0x0 -n initrd.img-${kver} -d initrd.img-${kver} uInitrd-${kver}
+tar cvzf /compile/source/linux-stable/${kver}.tar.gz /boot/*-${kver} /lib/modules/${kver}
+cp -v /compile/doc/stable/config.exy /compile/doc/stable/config.exy.old
+cp -v /compile/source/linux-stable/.config /compile/doc/stable/config.exy
+cp -v /compile/source/linux-stable/.config /compile/doc/stable/config.exy-${kver}
+cp -v /compile/source/linux-stable/*.tar.gz /compile/result/stable
+
+
+# options below:
+# - zswap.enabled=0 - kernel is compile with zswap, but its turned off
+# - video=HDMI-A-1:e - i had to force hdmi to on to get a reliable signal on hdmi
+# - drm.edid_firmware=edid/1024x768.bin - supply your resultion to get a reliable signal on hdmi
+#   - see https://wiki.archlinux.org/index.php/kernel_mode_setting#Forcing_modes_and_EDID for options
+/boot/extlinux/extlinux.conf:
+TIMEOUT 30
+DEFAULT v52130
+
+MENU TITLE odroid u3 boot options
+
+LABEL v52110
+      MENU LABEL v5.2.13 mali kernel mmcblk0
+      LINUX ../zImage-5.2.13-stb-exy+
+      FDT ../dtb-5.2.13-stb-exy+/exynos4412-odroidu3.dtb
+      APPEND console=ttySAC1,115200n8 console=tty1 mem=2047M smsc95xx.macaddr=1a:8d:d0:98:96:15 root=/dev/mmcblk0p3 ro loglevel=8 rootwait net.ifnames=0 ipv6.disable=1 fsck.repair=yes zswap.enabled=0 video=HDMI-A-1:e drm.edid_firmware=edid/1024x768.bin
+
+
+alternatively for older u-boot without syslinux support - /boot/boot.txt:
+setenv kver "5.2.13-stb-exy+"
+# console=ttySAC1,115200n8
+setenv bootargs "console=ttySAC1,115200n8 console=tty1 mem=2047M smsc95xx.macaddr=1a:8d:d0:98:96:15 root=/dev/mmcblk0p3 ro loglevel=8 rootwait net.ifnames=0 ipv6.disable=1 fsck.repair=yes zswap.enabled=0 video=HDMI-A-1:e drm.edid_firmware=edid/1024x768.bin"
+setenv initrd_high "0xffffffff"
+setenv fdt_high "0xffffffff"
+# setenv bootdelay "3"
+fatload mmc 0:1 0x40008000 zImage-${kver}
+fatload mmc 0:1 0x42000000 uInitrd-${kver}
+fatload mmc 0:1 0x44000000 exynos4412-odroidx2.dtb-${kver}
+# odroid u3
+# fatload mmc 0:1 0x44000000 exynos4412-odroidu3.dtb-${kver}
+bootz 0x40008000 0x42000000 0x44000000
+# use: mkimage -A arm -T script -O linux -d boot.txt boot.scr

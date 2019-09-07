@@ -1,0 +1,20 @@
+from: https://patchwork.kernel.org/patch/10966767/
+
+diff --git a/mm/cma.c b/mm/cma.c
+index 3340ef34c154..191c89bf038d 100644
+--- a/mm/cma.c
++++ b/mm/cma.c
+@@ -44,11 +44,13 @@ phys_addr_t cma_get_base(const struct cma *cma)
+ {
+ 	return PFN_PHYS(cma->base_pfn);
+ }
++EXPORT_SYMBOL_GPL(cma_get_base);
+ 
+ unsigned long cma_get_size(const struct cma *cma)
+ {
+ 	return cma->count << PAGE_SHIFT;
+ }
++EXPORT_SYMBOL_GPL(cma_get_size);
+ 
+ const char *cma_get_name(const struct cma *cma)
+ {
