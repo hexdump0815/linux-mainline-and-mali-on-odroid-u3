@@ -1,7 +1,7 @@
 some notes regarding the odroid u3:
 
 - all this was tested on an odroid u3 with xubuntu 18.04, but should in theory also work on an odroid x2
-- see readme.exy for instructions to build the kernel from sources and patches
+- see readme.exy for instructions to build the kernel from sources and patches (this is not a shell script)
 - random ethernet mac on each boot - fixed with extra kernel cmdline option to set it by hand
 - with mali loaded the kernel will crash sometimes after reboot - looks like gpu is left in a strange state?
   - disconnecting power _and_ hdmi for a moment (a minute or a few) brings it back at some point
