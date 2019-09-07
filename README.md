@@ -48,3 +48,5 @@ mainline u-boot:
       Device         Boot   Start      End  Sectors  Size Id Type
       /dev/mmcblk0p1 *      32768  1081343  1048576  512M 83 Linux
       ...
+
+see the release section of this github repo for a precompiled kernel, modules etc.
