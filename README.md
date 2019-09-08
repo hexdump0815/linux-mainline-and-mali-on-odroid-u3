@@ -20,6 +20,8 @@ some notes regarding the odroid u3:
 - suspend/wake/hibernate not tested
 - to turn off the blinking blue led: echo none > /sys/class/leds/led1\:heart/trigger
 - there is a github kernel tree for the odroid x2 & u3 with quite a few more patches applied to it and updated from time to time at https://github.com/tobiasjakobi/linux-odroid-public - for me it does not give any signal on hdmi and i preferred to stay closer to mainline, but most of the mali stuff in here is from that tree
+- on sd cards and emmc better create filesystems with journaling disabled (this should extend their life time)
+  - mkfs -t ext4 -O ^has_journal -L somelabel /dev/somedevice
 
 using gles or opengl with special rk3288 armsoc xorg server:
 - cd / ; tar xzf armsoc-xorg-ubuntu-18.04.tar.gz (for ubuntu 18.04)
