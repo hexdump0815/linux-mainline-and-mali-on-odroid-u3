@@ -24,7 +24,8 @@ some notes regarding the odroid u3:
   - mkfs -t ext4 -O ^has_journal -L somelabel /dev/somedevice
 
 using gles or opengl with special rk3288 armsoc xorg server:
-- cd / ; tar xzf armsoc-xorg-ubuntu-18.04.tar.gz (for ubuntu 18.04)
+- cd / ; tar xzf xorg-armsoc-armv7l-ubuntu.tar.gz (for ubuntu 18.04)
+- cd / ; tar xzf gl4es-armv7l-ubuntu.tar.gz (for ubuntu 18.04)
 - cd / ; tar xzf opt-mali-exynos4412.tar.gz
 - export LD_LIBRARY_PATH=/opt/mali-exynos4412
 - start your gles or opengl app
@@ -32,6 +33,7 @@ using gles or opengl with special rk3288 armsoc xorg server:
 - use 01-armsoc.conf in /etc/X11/xorg.conf.d
 
 using opengl with the default modesetting xorg server and gl4es hack (slower):
+- cd / ; tar xzf gl4es-armv7l-ubuntu.tar.gz (for ubuntu 18.04)
 - cd / ; tar xzf opt-mali-exynos4412-fbdev.tar.gz
 - export LD_LIBRARY_PATH=/opt/mali-exynos4412-fbdev
 - export LIBGL_FB=3
@@ -45,10 +47,11 @@ mainline u-boot:
   - dd if=u-boot.dd of=/dev/somedevice bs=512 seek=1 skip=1 
   - the seek and skip are to avoid overwriting the partition table
   - leave 16M free before the first partition:
+  ```
       fdisk -l
       ...
       Device         Boot   Start      End  Sectors  Size Id Type
       /dev/mmcblk0p1 *      32768  1081343  1048576  512M 83 Linux
       ...
-
+  ```
 see the release section of this github repo for a precompiled kernel, modules etc.
