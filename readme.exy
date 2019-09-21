@@ -15,7 +15,7 @@ patch -p1 < /compile/doc/stable/misc.exy/disable-usb3.patch
 patch -p1 < /compile/doc/stable/misc.exy/fix-odroid-u3-cpu-cooling.patch
 # add mali support
 patch -p1 < /compile/doc/stable/misc.exy/exynos4412-mali-complete.patch
-tar xzf /compile/doc/stable/misc.exy/exynos4412-mali-complete.tar.gz
+cp -r /compile/doc/stable/misc.exy/exynos4412-mali-complete/drivers/gpu/arm drivers/gpu
 patch -p1 < /compile/doc/stable/misc.exy/devfreq-turbo-for-mali-gpu-driver.patch 
 patch -p1 < /compile/doc/stable/misc.exy/mm-cma-export-functions-to-get-CMA-base-and-size.patch
 patch -p1 < /compile/doc/stable/misc.exy/kernel-dma-export-dma-contigous.patch
