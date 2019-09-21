@@ -57,19 +57,19 @@ cp -v /compile/source/linux-stable/*.tar.gz /compile/result/stable
 #   - see https://wiki.archlinux.org/index.php/kernel_mode_setting#Forcing_modes_and_EDID for options
 /boot/extlinux/extlinux.conf:
 TIMEOUT 30
-DEFAULT v52130
+DEFAULT v5310
 
 MENU TITLE odroid u3 boot options
 
-LABEL v52110
-      MENU LABEL v5.2.13 mali kernel mmcblk0
-      LINUX ../zImage-5.2.13-stb-exy+
-      FDT ../dtb-5.2.13-stb-exy+/exynos4412-odroidu3.dtb
+LABEL v5310
+      MENU LABEL v5.3.1 mali kernel mmcblk0
+      LINUX ../zImage-5.3.1-stb-exy+
+      FDT ../dtb-5.3.1-stb-exy+/exynos4412-odroidu3.dtb
       APPEND console=ttySAC1,115200n8 console=tty1 mem=2047M smsc95xx.macaddr=1a:8d:d0:98:96:15 root=/dev/mmcblk0p3 ro loglevel=8 rootwait net.ifnames=0 ipv6.disable=1 fsck.repair=yes zswap.enabled=0 video=HDMI-A-1:e drm.edid_firmware=edid/1024x768.bin
 
 
 alternatively for older u-boot without syslinux support - /boot/boot.txt:
-setenv kver "5.2.13-stb-exy+"
+setenv kver "5.3.1-stb-exy+"
 # console=ttySAC1,115200n8
 setenv bootargs "console=ttySAC1,115200n8 console=tty1 mem=2047M smsc95xx.macaddr=1a:8d:d0:98:96:15 root=/dev/mmcblk0p3 ro loglevel=8 rootwait net.ifnames=0 ipv6.disable=1 fsck.repair=yes zswap.enabled=0 video=HDMI-A-1:e drm.edid_firmware=edid/1024x768.bin"
 setenv initrd_high "0xffffffff"
@@ -77,8 +77,9 @@ setenv fdt_high "0xffffffff"
 # setenv bootdelay "3"
 fatload mmc 0:1 0x40008000 zImage-${kver}
 fatload mmc 0:1 0x42000000 uInitrd-${kver}
-fatload mmc 0:1 0x44000000 exynos4412-odroidx2.dtb-${kver}
+# odroid x2
+# fatload mmc 0:1 0x44000000 dtb-${kver}/exynos4412-odroidx2.dtb
 # odroid u3
-# fatload mmc 0:1 0x44000000 exynos4412-odroidu3.dtb-${kver}
+fatload mmc 0:1 0x44000000 dtb-${kver}/exynos4412-odroidu3.dtb
 bootz 0x40008000 0x42000000 0x44000000
 # use: mkimage -A arm -T script -O linux -d boot.txt boot.scr
