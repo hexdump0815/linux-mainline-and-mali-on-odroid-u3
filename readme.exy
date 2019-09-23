@@ -13,11 +13,20 @@ patch -p1 < /compile/doc/stable/misc.exy/fix-odroid-u3-cpu-cooling.patch
 patch -p1 < /compile/doc/stable/misc.exy/exynos4412-mali-complete.patch
 cp -r /compile/doc/stable/misc.exy/exynos4412-mali-complete/drivers/gpu/arm drivers/gpu
 patch -p1 < /compile/doc/stable/misc.exy/devfreq-turbo-for-mali-gpu-driver.patch 
-patch -p1 < /compile/doc/stable/misc.exy/mm-cma-export-functions-to-get-CMA-base-and-size.patch
-patch -p1 < /compile/doc/stable/misc.exy/kernel-dma-export-dma-contigous.patch
+patch -p1 < /compile/doc/stable/misc.exy/export-cma-symbols.patch
 patch -p1 < /compile/doc/stable/misc.exy/dts-add-gpu-node-for-exynos4412.patch 
 patch -p1 < /compile/doc/stable/misc.exy/dts-add-gpu-opp-table.patch 
 patch -p1 < /compile/doc/stable/misc.exy/dts-setup-gpu-node.patch
+patch -p1 < /compile/doc/stable/misc.exy/dts-exynos-remove-new-gpu-node-v5.3.patch
+# some more useful patches from the tobias jakobi tree
+patch -p1 < /compile/doc/stable/misc.exy/poweroff-reboot-regulators.patch
+patch -p1 < /compile/doc/stable/misc.exy/add-power-sequence-handling-for-usb-devices.patch
+patch -p1 < /compile/doc/stable/misc.exy/add-power-sequence-library.patch
+patch -p1 < /compile/doc/stable/misc.exy/fix-exynos4412-isp-cmu-reset-in-aftr-mode.patch
+patch -p1 < /compile/doc/stable/misc.exy/fix-lan9730-on-odroid-u3-after-tftpboot.patch
+patch -p1 < /compile/doc/stable/misc.exy/remove-unnecessary-null-test-for-to_devfreq_event.patch
+patch -p1 < /compile/doc/stable/misc.exy/suspend-all-devices-on-system-shutdown.patch
+patch -p1 < /compile/doc/stable/misc.exy/verify-devicetree-nodes-for-usb-devices.patch
 
 cp /compile/doc/stable/config.exy /compile/source/linux-stable/.config
 cd /compile/source/linux-stable
@@ -56,25 +65,25 @@ MENU TITLE odroid u3 boot options
 LABEL v5310
       MENU LABEL v5.3.1 mali kernel mmcblk0
       LINUX ../zImage-5.3.1-stb-exy+
-      # odroid x2
-      #FDT ../dtb-5.3.1-stb-exy+/exynos4412-odroidx2.dtb
       # odroid u3
       FDT ../dtb-5.3.1-stb-exy+/exynos4412-odroidu3.dtb
-      APPEND console=ttySAC1,115200n8 console=tty1 mem=2047M smsc95xx.macaddr=1a:8d:d0:98:96:15 root=/dev/mmcblk0p3 ro loglevel=8 rootwait net.ifnames=0 ipv6.disable=1 fsck.repair=yes video=HDMI-A-1:e drm.edid_firmware=edid/1024x768.bin
+      # odroid x2
+      #FDT ../dtb-5.3.1-stb-exy+/exynos4412-odroidx2.dtb
+      APPEND console=ttySAC1,115200n8 console=tty1 mem=2047M smsc95xx.macaddr=11:22:33:44:55:66 root=/dev/mmcblk0p3 ro loglevel=8 rootwait net.ifnames=0 ipv6.disable=1 fsck.repair=yes video=HDMI-A-1:e drm.edid_firmware=edid/1024x768.bin
 
 
 alternatively for older u-boot without syslinux support - /boot/boot.txt:
 setenv kver "5.3.1-stb-exy+"
 # console=ttySAC1,115200n8
-setenv bootargs "console=ttySAC1,115200n8 console=tty1 mem=2047M smsc95xx.macaddr=1a:8d:d0:98:96:15 root=/dev/mmcblk0p3 ro loglevel=8 rootwait net.ifnames=0 ipv6.disable=1 fsck.repair=yes video=HDMI-A-1:e drm.edid_firmware=edid/1024x768.bin"
+setenv bootargs "console=ttySAC1,115200n8 console=tty1 mem=2047M smsc95xx.macaddr=11:22:33:44:55:66 root=/dev/mmcblk0p3 ro loglevel=8 rootwait net.ifnames=0 ipv6.disable=1 fsck.repair=yes video=HDMI-A-1:e drm.edid_firmware=edid/1024x768.bin"
 setenv initrd_high "0xffffffff"
 setenv fdt_high "0xffffffff"
 # setenv bootdelay "3"
 fatload mmc 0:1 0x40008000 zImage-${kver}
 fatload mmc 0:1 0x42000000 uInitrd-${kver}
-# odroid x2
-# fatload mmc 0:1 0x44000000 dtb-${kver}/exynos4412-odroidx2.dtb
 # odroid u3
 fatload mmc 0:1 0x44000000 dtb-${kver}/exynos4412-odroidu3.dtb
+# odroid x2
+#fatload mmc 0:1 0x44000000 dtb-${kver}/exynos4412-odroidx2.dtb
 bootz 0x40008000 0x42000000 0x44000000
 # use: mkimage -A arm -T script -O linux -d boot.txt boot.scr
