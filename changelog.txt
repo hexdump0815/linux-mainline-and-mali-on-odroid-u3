@@ -1,0 +1,12 @@
+v5.2.13
+- initial import
+
+v5.3.1
+- upgrade kernel to v5.3.1
+- disable zswap
+- add odroid x2 dtb
+- remove snow chromebook related patches and dtb files
+- remove the cortex a15 errata
+- add source urls to tobiasjakobi patches used
+- add a few more tobiasjakobi patches
+- prepare for imagebuild framework
