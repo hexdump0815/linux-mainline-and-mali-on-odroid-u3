@@ -1,5 +1,3 @@
-IMPORTANT: please do not use this version yet, as there is still an issue with the dtb and mali support
-
 some notes regarding the odroid u3:
 
 - all this was tested on an odroid u3 with xubuntu 18.04, but should in theory also work on an odroid x2
