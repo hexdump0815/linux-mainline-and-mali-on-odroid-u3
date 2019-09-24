@@ -59,5 +59,5 @@ mainline u-boot:
 see the release section of this github repo for a precompiled kernel, modules etc.
 
 maybe interesting forum threads:
-https://forum.odroid.com/viewtopic.php?f=55&t=3691&start=400#p267864
-https://forum.odroid.com/viewtopic.php?f=81&t=9342&start=50#p267863
+* https://forum.odroid.com/viewtopic.php?f=55&t=3691&start=400#p267864
+* https://forum.odroid.com/viewtopic.php?f=81&t=9342&start=50#p267863
