@@ -66,4 +66,5 @@ maybe interesting forum threads:
 in case the readme.exy instructions are not clear enough, please have a look at
 - https://forum.odroid.com/viewtopic.php?f=55&t=3691&p=276318#p276318
 - https://github.com/rodolfoap/kernel-odroid-u3/blob/master/README.md
+
 maybe afterwards its more clear how it is ment to work ...
