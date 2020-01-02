@@ -61,3 +61,9 @@ see the release section of this github repo for a precompiled kernel, modules et
 maybe interesting forum threads:
 * https://forum.odroid.com/viewtopic.php?f=55&t=3691&start=400#p267864
 * https://forum.odroid.com/viewtopic.php?f=81&t=9342&start=50#p267863
+
+
+in case the readme.exy instructions are not clear enough, please have a look at
+- https://forum.odroid.com/viewtopic.php?f=55&t=3691&p=276318#p276318
+- https://github.com/rodolfoap/kernel-odroid-u3/blob/master/README.md
+maybe afterwards its more clear how it is ment to work ...
