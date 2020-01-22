@@ -31,6 +31,13 @@ patch -p1 < /compile/doc/stable/misc.exy/dts-exynos-remove-new-gpu-node-v5.3.pat
 
 cp /compile/doc/stable/config.exy /compile/source/linux-stable/.config
 cd /compile/source/linux-stable
+
+# add u3noplus dtb for the non plus version to fix reboot for it - has to be redone for each new kernel version
+git checkout -- arch/arm/boot/dts/Makefile
+cp arch/arm/boot/dts/exynos4412-odroidu3.dts arch/arm/boot/dts/exynos4412-odroidu3noplus.dts
+cp arch/arm/boot/dts/exynos4412-odroid-common.dtsi arch/arm/boot/dts/exynos4412-odroid-common-u3noplus.dtsi
+patch -p1 < /compile/doc/stable/misc.exy/reboot-fix-u3noplus.patch
+
 export ARCH=arm
 make oldconfig
 make -j 4 zImage dtbs modules
