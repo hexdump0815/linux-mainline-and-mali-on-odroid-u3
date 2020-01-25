@@ -39,11 +39,15 @@ cp arch/arm/boot/dts/exynos4412-odroid-common.dtsi arch/arm/boot/dts/exynos4412-
 patch -p1 < /compile/doc/stable/misc.exy/reboot-fix-u3noplus.patch
 
 export ARCH=arm
+# make exynos_defconfig + fix options - see misc.exy/options
 make oldconfig
 make -j 4 zImage dtbs modules
 export kver=`make kernelrelease`
 echo ${kver}
+# remove debug info if there and not wanted
+# find . -type f -name '*.ko' | sudo xargs -n 1 objcopy --strip-unneeded
 make modules_install
+# make headers_install INSTALL_HDR_PATH=/usr
 cp -v .config /boot/config-${kver}
 cp -v arch/arm/boot/zImage /boot/zImage-${kver}
 mkdir -p /boot/dtb-${kver}
@@ -66,22 +70,24 @@ cp -v /compile/source/linux-stable/*.tar.gz /compile/result/stable
 #   - see https://wiki.archlinux.org/index.php/kernel_mode_setting#Forcing_modes_and_EDID for options
 /boot/extlinux/extlinux.conf:
 TIMEOUT 30
-DEFAULT v5310
+DEFAULT v545
 
 MENU TITLE odroid u3 boot options
 
-LABEL v5310
-      MENU LABEL v5.3.1 mali kernel mmcblk0
-      LINUX ../zImage-5.3.1-stb-exy+
+LABEL v545
+      MENU LABEL v5.4.5 mali kernel mmcblk0
+      LINUX ../zImage-5.4.5-stb-exy+
       # odroid u3
-      FDT ../dtb-5.3.1-stb-exy+/exynos4412-odroidu3.dtb
+      FDT ../dtb-5.4.5-stb-exy+/exynos4412-odroidu3.dtb
       # odroid x2
-      #FDT ../dtb-5.3.1-stb-exy+/exynos4412-odroidx2.dtb
+      #FDT ../dtb-5.4.5-stb-exy+/exynos4412-odroidx2.dtb
+      # odroid x
+      #FDT ../dtb-5.4.5-stb-exy+/exynos4412-odroidx.dtb
       APPEND console=ttySAC1,115200n8 console=tty1 mem=2047M smsc95xx.macaddr=11:22:33:44:55:66 root=/dev/mmcblk0p3 ro loglevel=8 rootwait net.ifnames=0 ipv6.disable=1 fsck.repair=yes video=HDMI-A-1:e drm.edid_firmware=edid/1024x768.bin
 
 
 alternatively for older u-boot without syslinux support - /boot/boot.txt:
-setenv kver "5.3.1-stb-exy+"
+setenv kver "5.4.5-stb-exy+"
 # console=ttySAC1,115200n8
 setenv bootargs "console=ttySAC1,115200n8 console=tty1 mem=2047M smsc95xx.macaddr=11:22:33:44:55:66 root=/dev/mmcblk0p3 ro loglevel=8 rootwait net.ifnames=0 ipv6.disable=1 fsck.repair=yes video=HDMI-A-1:e drm.edid_firmware=edid/1024x768.bin"
 setenv initrd_high "0xffffffff"
@@ -93,5 +99,7 @@ fatload mmc 0:1 0x42000000 uInitrd-${kver}
 fatload mmc 0:1 0x44000000 dtb-${kver}/exynos4412-odroidu3.dtb
 # odroid x2
 #fatload mmc 0:1 0x44000000 dtb-${kver}/exynos4412-odroidx2.dtb
+# odroid x
+#fatload mmc 0:1 0x44000000 dtb-${kver}/exynos4412-odroidx.dtb
 bootz 0x40008000 0x42000000 0x44000000
 # use: mkimage -A arm -T script -O linux -d boot.txt boot.scr
