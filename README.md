@@ -1,3 +1,5 @@
+UPDATE: see here for updated images - https://github.com/hexdump0815/imagebuilder
+
 update: some initial bootable ubuntu 18.04 and debian 10 sd card images for the odroid u3, u3+ and x2 are now available at https://github.com/hexdump0815/imagebuilder/releases/tag/190924-01 - see https://github.com/hexdump0815/imagebuilder/blob/master/README.md for some more information about them ...
 
 some notes regarding the odroid u3:
